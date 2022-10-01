@@ -2,8 +2,9 @@ from bisect import bisect_left
 import random
 
 class player():
-    def __init__(self,hp:int,energy:int,handsize:int,cards:list,buffs:list,deck:list,discard:list):
+    def __init__(self,hp:int,armour:int,energy:int,handsize:int,cards:list,buffs:list,deck:list,discard:list):
         self.hp = hp
+        self.armour = armour
         self.energy = energy
         self.baseenergy =energy
         self.handsize = handsize
@@ -25,21 +26,24 @@ class player():
         else:
             raise("tried to draw, ran out of cards!")
     
-    def play(self,card):
-        if card == "end turn":
+    def play(self,istr:str):
+        if istr == "end turn":
             return 2
-        elif card in self.cards:
-            self.cards.remove(card)
-            self.discard.append(card)
-            self.energy -= card.activate()
-            if self.energy <= 0:
-                return 2
-            return 1
-        else:
-            print("error card cannot be played")
-            return 0
+        elif istr.isnumeric():
+            i = int(istr)
+            if i>=0 and i < len(self.cards):
+                card = self.cards[i]
+                self.cards.remove(card)
+                self.discard.append(card)
+                self.energy -= card.activate()
+                if self.energy <= 0 or len(self.cards)<=0:
+                    return 2
+                return 1
+        print("error card cannot be played")
+        return 0
 
     def newturn(self,extraenergy=0):
+        self.armour = 0
         while self.handsize>len(self.cards) and (len(self.deck)>0 or len(self.discard)>0):
             self.draw()
         for i in self.buffs:
@@ -49,13 +53,15 @@ class player():
         self.energy = self.baseenergy + extraenergy
 
 class card():
-    def __init__(self,name,cost,effect):
+    def __init__(self,name,cost,effect,args):
         self.name = name
         self.cost = cost
         self.effect = effect
+        self.args = args
 
     def activate(self):
-        return self.effect()
+        self.effect(self.args)
+        return self.cost
     
     def __str__(self):
         return self.name
