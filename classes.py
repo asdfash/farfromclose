@@ -71,7 +71,8 @@ class card():
     
 
 class buff():
-    def __init__(self,duration,effect):
+    def __init__(self,name,duration,effect):
+        self.name = name
         self.duration = duration
         self.effect = effect
 
