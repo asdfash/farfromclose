@@ -4,6 +4,7 @@ import random
 class player():
     def __init__(self,hp:int,armour:int,energy:int,handsize:int,cards:list,buffs:list,deck:list,discard:list):
         self.hp = hp
+        self.maxhp = hp
         self.armour = armour
         self.energy = energy
         self.baseenergy =energy
@@ -14,6 +15,7 @@ class player():
         self.discard = discard
         random.shuffle(self.deck)
         self.newturn()
+        self.prevhp = hp
 
     def draw(self):
         if len(self.deck) > 0:
@@ -53,11 +55,13 @@ class player():
         self.energy = self.baseenergy + extraenergy
 
 class card():
-    def __init__(self,name,cost,effect,args):
+    def __init__(self,name,cost,type,effect,args,description):
         self.name = name
+        self.type = type
         self.cost = cost
         self.effect = effect
         self.args = args
+        self.description = description
 
     def activate(self):
         self.effect(self.args)
@@ -92,6 +96,8 @@ class enemy():
         self.weightsum = 0
         self.weights = []
         self.updateweight()
+        self.prevhp1 = hp1
+        self.prevhp2 = hp2
             
     def updateweight(self):
         self.weightsum = 0
@@ -111,13 +117,7 @@ class enemy():
             return 2
         return 1
 
-class move():
-    def __init__(self,name,cost,effect,weight):
-        self.name = name
-        self.cost = cost
-        self.effect = effect
+class move(card):
+    def __init__(self,name,cost,type,effect,args,description,weight):
+        super.__init__(name,cost,type,effect,args,description)
         self.weight = weight #chance to be used
-
-    def activate(self):
-        self.effect()
-        return self.cost
