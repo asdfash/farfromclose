@@ -63,7 +63,7 @@ def main():
     lovelanguage = move("Love Language",1, neutral,Love,Lbuff,"permernantly raises sanity damage by 1 for every love attack played during your next turn",1)
     k = move("k",3,neutral,K,12,"Deal 12 damage",1)
 
-    you.deck = [block,block,block,block,filrt]
+    you.deck = [block,block,block,block,flirt,flirt,help,help,thoughtfulGift,visualAphrodisiac]
     baddie1.moves = [holdThatAgainstYou]
     baddie1.updateweight()
     random.shuffle(you.deck)
