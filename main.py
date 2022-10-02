@@ -1,14 +1,42 @@
-
-from turtle import st
 import pygame
 import os
 from pygame.locals import *
 from classes import *
 
+def relative(original_pixel,intended_relative_amt,divisor=100):
+    '''
+    helper function to convert from absolute to relative sizes. Divisor is used to increase precision. First 2 variables are tuples in the form of width, height
+    '''
+    ow,oh = original_pixel
+    nw,nh = intended_relative_amt
+    return ow*nw/divisor,oh*nh/divisor
 
 neutral = 0
 lust = 1
 love = -1
+#settings
+width,height = 1280,720 #16x9
+fps = 60
+barsizex,barsizey = 18,20
+baroffsetx,baroffsety =1,1
+cardsizex,cardsizey = 205,118
+cardoffsetx,cardoffsety =8,20
+hpbarscale = relative((barsizex,barsizey),(90,90))
+midoffsetx = 2
+dragt = (50,50)
+gamename = "E"
+textareadown = (300,645,600,75)
+textareaup = (300,60,670,145)
+endturnsize = (80,75)
+endturndx = 900
+endturndown = 645
+endturnup = 200
+messagelistmax = 6
+messageoffset = (0,5)
+
+pygame.init()
+screen = pygame.display.set_mode((width,height))
+pygame.display.set_caption(gamename)
 
                 
 
@@ -201,35 +229,11 @@ def skip(*args):
 
 
 #helper functions
-def relative(original_pixel,intended_relative_amt,divisor=100):
-    '''
-    helper function to convert from absolute to relative sizes. Divisor is used to increase precision. First 2 variables are tuples in the form of width, height
-    '''
-    ow,oh = original_pixel
-    nw,nh = intended_relative_amt
-    return ow*nw/divisor,oh*nh/divisor
 
-#settings
-width,height = 1280,720 #16x9
-fps = 60
-barsizex,barsizey = 18,20
-baroffsetx,baroffsety =1,1
-cardsizex,cardsizey = 205,118
-cardoffsetx,cardoffsety =8,20
-hpbarscale = relative((barsizex,barsizey),(90,90))
-midoffsetx = 2
-dragt = (50,50)
-gamename = "E"
-textareadown = (300,645,600,75)
-textareaup = (300,60,670,145)
-endturnsize = (80,75)
-endturndx = 900
-endturndown = 645
-endturnup = 200
-messagelistmax = 6
-messageoffset = (0,5)
 
-messagelist =[]
+
+
+
 
 #palette
 white = (255,255,255)
@@ -240,6 +244,9 @@ clickable = []
 textbox= pygame.Rect(textareadown)
 
 #asset import
+winscreen = pygame.image.load(os.path.join('Assets','win screen.png'))
+losescreen = pygame.image.load(os.path.join('Assets','lose screen.png'))
+
 hp_bar_raw = pygame.image.load(os.path.join('Assets','hp bar.png'))
 hp_bar = pygame.transform.scale(hp_bar_raw, hpbarscale)
 armor_bar = pygame.image.load(os.path.join('Assets','armor bar.png'))
@@ -251,7 +258,7 @@ cardview = pygame.image.load(os.path.join('Assets','cardview bottom.png'))
 bf = pygame.image.load(os.path.join('Assets','bf.png'))
 gf = pygame.image.load(os.path.join('Assets','gf.png'))
 cardviewtop =pygame.image.load(os.path.join('Assets','cardview top.png'))
-bgm =  os.path.join('Assets','loopable.mp3')
+
 
 #cards/moves
 anklepic_asset = pygame.image.load(os.path.join('Assets','cards','ankle pic.png'))
@@ -278,19 +285,38 @@ selfie_asset = pygame.image.load(os.path.join('Assets','cards','selfie.png'))
 tease_asset = pygame.image.load(os.path.join('Assets','cards','tease.png'))
 yesmyfault_asset = pygame.image.load(os.path.join('Assets','cards','yes my fault.png'))
 
-#moves
+
+
+
+# buffs
+afbuff_asset = pygame.image.load(os.path.join('Assets','buffs','AFbuff.png'))
+apbuff_asset = pygame.image.load(os.path.join('Assets','buffs','APbuff.png'))
+bdmbuff_asset = pygame.image.load(os.path.join('Assets','buffs','BDMbuff.png'))
+csbuff_asset = pygame.image.load(os.path.join('Assets','buffs','CSbuff.png'))
+glbuff_asset = pygame.image.load(os.path.join('Assets','buffs','GLBuff.png'))
+htaybuff_asset = pygame.image.load(os.path.join('Assets','buffs','HTAYbuff.png'))
+lbuff_asset = pygame.image.load(os.path.join('Assets','buffs','Lbuff.png'))
+lmpbuff_asset = pygame.image.load(os.path.join('Assets','buffs','LMPbuff.png'))
+slbuff_asset = pygame.image.load(os.path.join('Assets','buffs','SLbuff.png'))
+syfbuff_asset = pygame.image.load(os.path.join('Assets','buffs','SYFbuff.png'))
+vabuff_asset = pygame.image.load(os.path.join('Assets','buffs','VAbuff.png'))
+#soundlist
+# alert1 = pygame.mixer.Sound(os.path.join('Assets','alert','1.m4a'))
+# alert2 = pygame.mixer.Sound(os.path.join('Assets','alert','2.m4a'))
+# alert3 = pygame.mixer.Sound(os.path.join('Assets','alert','3.m4a'))
+# alert4 = pygame.mixer.Sound(os.path.join('Assets','alert','4.m4a'))
+# alert5 = pygame.mixer.Sound(os.path.join('Assets','alert','5.m4a'))
+# alert6 = pygame.mixer.Sound(os.path.join('Assets','alert','6.m4a'))
+# soundlist = [alert1,alert2,alert3,alert4,alert5,alert6]
+bgm =  os.path.join('Assets','loopable.mp3')
+
+#pygane init
 
 
 cardhitboxlist = [pygame.Rect((330 + (i%3) * (cardoffsetx+cardsizex)),(280 + (i//3) * (cardoffsety+cardsizey)),cardsizex,cardsizey) for i in range(9)]
 endturnhitbox = pygame.Rect(endturndx,endturndown,endturnsize[0],endturnsize[1])
-
-
-
-#pygane init
-pygame.init()
-screen = pygame.display.set_mode((width,height))
-pygame.display.set_caption(gamename)
-
+pygame.mixer.music.load(bgm)
+pygame.mixer.music.play(-1)
 def main2():
     hp = 30
     armour = 0 
@@ -312,23 +338,23 @@ def main2():
     yourturn= 1
 
     #bufflist
-    VAbuff = buff("aroused",2,[1,0],skip,boost,[0,2/3,0,1])
-    GLBuff = buff("gaslit",-1,[1,0],lovedmg,skip,4)
-    BDMbuff= buff("DM's blocked",1,[1,0],skip,bdm,0)
-    AFbuff = buff("Death sentenced",1,[1,0],skip,die,0)
-    CSbuff = buff("ignored",2,[1,0],skip,boost,[0,2,0,0.5])
-    LMPbuff = buff("busy",1,[1,0],skip,skip,1)
-    SLbuff = buff("Empowered",-1,[0,0],skip,skip,0)
-    Lbuff = buff("loved",2,[0,1],strength,skip,[1,1])
-    APbuff = buff("Smexy",-1,[0,0],skip,skip,0)
-    SYFbuff = buff("Embarassed",-1,[0,0],skip,skip,0)
-    HTAYbuff = buff("Pressured",-1,[0,0],skip,skip,0)
+    VAbuff = buff("aroused",2,[1,0],skip,boost,[0,2/3,0,1],vabuff_asset)
+    GLBuff = buff("gaslit",-1,[1,0],lovedmg,skip,3,glbuff_asset)
+    BDMbuff= buff("DM's blocked",1,[1,0],skip,bdm,0,bdmbuff_asset)
+    AFbuff = buff("Death sentenced",1,[1,0],skip,die,0,afbuff_asset)
+    CSbuff = buff("ignored",1.5,[1,0],skip,boost,[0,2,0,0.5],csbuff_asset)
+    LMPbuff = buff("busy",1,[1,0],skip,skip,1,lmpbuff_asset)
+    SLbuff = buff("Empowered",-1,[0,0],skip,skip,0,slbuff_asset)
+    Lbuff = buff("loved",2,[0,1],strength,skip,[1,1],lbuff_asset)
+    APbuff = buff("Smexy",-1,[0,0],skip,skip,0,apbuff_asset)
+    SYFbuff = buff("Embarassed",-1,[0,0],skip,skip,0,syfbuff_asset)
+    HTAYbuff = buff("Pressured",-1,[0,0],skip,skip,0,htaybuff_asset)
 
     #cardlist
     block = card("defend", 1, neutral, defend,4 , defend_asset)
     flirt = card("flirt", 1,lust, lustdmg, 3, flirt_asset)
     help = card("help", 1,love, lovedmg, 2, flatter_asset)
-    thoughtfulGift = card("Thoughtful gift",1, love, TG,(3,6),gift_asset) #(love dmg, if<dmg)
+    thoughtfulGift = card("Thoughtful gift",1, love, TG,(3,5),gift_asset) #(love dmg, if<dmg)
     visualAphrodisiac = card("Visual Aphrodisiac", 1, lust,VA, (3,VAbuff), selfie_asset)
     scheduledMessage = card("Scheduled Message", 1, love,SM,3, scheduledmessage_asset)
     gaslighting = card("Gaslighting", 2, love, GL,(1,GLBuff),gaslight_asset )
@@ -336,13 +362,13 @@ def main2():
     streak = card("Streak", 1, lust, ST, (3,2),tease_asset)
     anklePic = card("Ankle Pic", 2, lust, AP,APbuff,anklepic_asset)
     blockDM = card("Block DM", 3, lust, BDM,BDMbuff,brb_asset)
-    wittyComeback = card("Witty Comeback", 1, neutral, WCB, (3,6),comeback_asset) #(lust dmg, love dmg)
+    wittyComeback = card("Witty Comeback", 1, neutral, WCB, (3,4),comeback_asset) #(lust dmg, love dmg)
     admittingFault = card("Admitting Fault", 0, neutral, AF,(2,AFbuff),yesmyfault_asset)
     drunkText = card("Drunk Text", 1, neutral, DT,(3,6),drunk_asset) #(love dmg, lust dmg)
     
     #movelist
     attack = move("Attack",1,neutral,sanitydmg,4,roast_asset,2)
-    coldShoulder = move("Cold Shoulder", 1,neutral,CS,(3,CSbuff),coldshoulder_asset,1)
+    coldShoulder = move("Cold Shoulder", 1,neutral,CS,(4,CSbuff),coldshoulder_asset,1)
     diggingUpThePast = move("Digging Up The Past", 1, neutral, DUTP,0,dutp_asset,1)
     lastMinPlans = move("Last Minute Plans",2,neutral,LMP,(6,LMPbuff),lasminplans_asset,1)
     changeMyMind = move("Change My Mind",1, neutral,CMM,0,changemymind_asset,1)
@@ -351,6 +377,8 @@ def main2():
     lovelanguage = move("Love Language",1, neutral,Love,Lbuff,lovelanguage_asset,1)
     k = move("k",3,neutral,K,12,"Deal 12 damage",1)
 
+    #
+    
     you.deck = [block,block,block,block, flirt,flirt,help,help,anklePic,visualAphrodisiac,streak,selfLove,drunkText,\
                 thoughtfulGift,scheduledMessage,gaslighting,blockDM,wittyComeback,admittingFault]
     baddie1.moves = [attack,coldShoulder,diggingUpThePast,lastMinPlans,changeMyMind,holdThatAgainstYou,\
@@ -359,51 +387,54 @@ def main2():
     random.shuffle(you.deck)
     you.newturn()
     
-
-    pygame.mixer.music.load(bgm)
-    pygame.mixer.music.play(-1)
+    restart = pygame.Rect(0,0,width,height)
     lclick = False
     drag = False
     dragl = [0,0]
     clock =pygame.time.Clock()
     run = True
+    global win,messagelist
+    messagelist =[]
+    win =0
     while run:
         x=-1
         if baddie1.hp1 <=0 or baddie1.hp2 <= 0:
-            print("you win!")
-            return
+            win = 1
+            drawwin()
         if you.hp<=0:
-            print("you lose!")
-            return
+            win =-1
+            drawlose()
         mx,my = pygame.mouse.get_pos()
         clock.tick(fps)
         for event in pygame.event.get():
             if event.type == QUIT:
                 run = False
+                exit()
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if lclick == False:
-                        #on click
-                        omx,omy = mx,my
-                    lclick=True
+                        if lclick == False:
+                            #on click
+                            omx,omy = mx,my
+                        lclick=True
 
             if event.type == MOUSEBUTTONUP:
                 if event.button == 1:
-                    if drag:
-                        print("cancelled")
-                    if not drag:
-                        x=exceute((mx,my))
-                    lclick = False
-                    dragl = [0,0]
-                    drag = False
-
-        if lclick:
-            dragl = [mx-omx,my-omy]
-            if abs(dragl[0]) > dragt[0] and abs(dragl[1]) > dragt[1]:
-                drag = True
-        msg = main(x)
-        messagehandler(msg) 
-        draw_window()
+                        if drag:
+                            print("cancelled")
+                        if not drag:
+                            x=exceute((mx,my))
+                        lclick = False
+                        dragl = [0,0]
+                        drag = False
+        if win ==0:
+            if lclick:
+                dragl = [mx-omx,my-omy]
+                if abs(dragl[0]) > dragt[0] and abs(dragl[1]) > dragt[1]:
+                    drag = True
+            msg = main(x)
+            messagehandler(msg) 
+            draw_window()
+        
 
 
 def main(x):
@@ -436,8 +467,21 @@ def messagehandler(msg=""):
         if len(messagelist)>=messagelistmax:
             messagelist.pop()
         messagelist = [msg] + messagelist
+        # r = random.choice(soundlist)
+        # pygame.mixer.Sound.play(r)
+        # pygame.mixer.music.stop()
 
-        
+
+
+
+def drawwin():
+    screen.blit(winscreen,(0,0))
+    pygame.display.update()
+
+def drawlose():
+    screen.blit(losescreen,(0,0))
+    pygame.display.update()
+
 def draw_window():
     screen.blit(bf,(0,0))
     screen.blit(gf,(0,0))
@@ -488,6 +532,9 @@ def draw_window():
             x = 35 + (i%3) * (cardoffsetx+cardsizex)
             y = 280 + (i//3) * (cardoffsety+cardsizey)
             screen.blit(you.cards[i].asset,(x,y))
+    
+    for i in you.buffs:
+        screen.blit(i.asset,(0,0))
     screen.blit(cardviewtop,(0,0))
     
     pygame.display.update()
@@ -496,16 +543,20 @@ def is_over(rect:Rect, pos):
     return rect.collidepoint(pos[0], pos[1])
 
 def exceute(pos):
-    x = -1
-    if cardview_toggle:
-        for i in range(len(cardhitboxlist)):
-            if is_over(cardhitboxlist[i],pos):
-                x=i
-    if is_over(endturnhitbox, pos):
-        x = 10
-    if is_over(textbox,pos):
-        toggle_cards()
-    return x
+    if win == 0:
+        x = -1
+        if cardview_toggle:
+            for i in range(len(cardhitboxlist)):
+                if is_over(cardhitboxlist[i],pos):
+                    x=i
+        if is_over(endturnhitbox, pos):
+            x = 10
+        if is_over(textbox,pos):
+            toggle_cards()
+        return x
+    else:
+
+        return main2()
 
 def toggle_cards():
     global textbox,cardview_toggle

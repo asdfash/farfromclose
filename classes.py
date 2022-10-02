@@ -1,5 +1,6 @@
 from bisect import bisect_left
 import random
+from types import NoneType
 
 class player():
     def __init__(self,hp:int,armour:int,energy:int,handsize:int,cards:list,buffs:list,boost:list,deck:list,discard:list):
@@ -38,9 +39,11 @@ class player():
             return
 
     def play(self,i):
-        if i > 8:
+        if type(i) == NoneType:
+            pass
+        elif i > 8:
             return 2,""
-        if i>=0 and i < len(self.cards):
+        elif i>=0 and i < len(self.cards):
             card = self.cards[i]
             self.cards.remove(card)
             self.discard.append(card)
