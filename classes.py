@@ -37,23 +37,21 @@ class player():
         else:
             return
 
-    def play(self,istr:str):
-        if istr == "end turn":
-            return 2
-        elif istr.isnumeric():
-            i = int(istr)
-            if i>=0 and i < len(self.cards):
-                card = self.cards[i]
-                self.cards.remove(card)
-                self.discard.append(card)
-                self.energy -= card.activate()
-                if self.htay > 0:
-                    self.hp -= self.htay
-                if self.energy <= 0 or len(self.cards)<=0:
-                    return 2
-                return 1
+    def play(self,i):
+        if i > 8:
+            return 2,""
+        if i>=0 and i < len(self.cards):
+            card = self.cards[i]
+            self.cards.remove(card)
+            self.discard.append(card)
+            self.energy -= card.activate()
+            if self.htay > 0:
+                self.hp -= self.htay
+            if self.energy <= 0 or len(self.cards)<=0:
+                return 2,card.asset
+            return 1,card.asset
         print("error card cannot be played")
-        return 0
+        return 0,""
 
     def newturn(self,extraenergy=0):
         for i in self.buffs:
@@ -62,6 +60,9 @@ class player():
             if x: 
                 self.buffs.remove(i)
         self.armour = 0
+        for i in range(len(self.cards)):
+            self.discard.append(self.cards[i])
+        self.cards.clear()
         while self.handsize+self.temp>len(self.cards) and (len(self.deck)>0 or len(self.discard)>0) and len(self.cards)<9:
             self.draw()
         self.temp =0
@@ -70,13 +71,13 @@ class player():
         self.energy = self.baseenergy + extraenergy
 
 class card():
-    def __init__(self,name,cost,type,effect,args,description):
+    def __init__(self,name,cost,type,effect,args,asset):
         self.name = name
         self.type = type
         self.cost = cost
         self.effect = effect
         self.args = args
-        self.description = description
+        self.asset = asset
 
     def activate(self):
         self.effect(self.args)
@@ -90,13 +91,14 @@ class card():
     
 
 class buff():
-    def __init__(self,name:str,duration:int,phases:list,aeffect,deffect,args):
+    def __init__(self,name:str,duration:int,phases:list,aeffect,deffect,args,asset=None):
         self.name = name
         self.duration = duration
         self.phase = phases #[0] = before, [1] = during moves
         self.aeffect = aeffect
         self.deffect = deffect
         self.args = args
+        self.asset = asset
 
     def activate(self,i):
         if (i == 0 and self.phase[0] == 1) or (i ==1 and self.phase[1]== 1): 
@@ -144,18 +146,14 @@ class enemy():
 
     def play(self):
         randomizer = random.random() * self.weightsum
-        print(self.weightsum)
-        print(randomizer)
         index = bisect_left(self.weights, randomizer)
-        print(index)
         action = self.moves[index]
-        print("baddie played",action.name)
         self.energy -= action.activate()
         if self.energy <= 0:
-            return 2
-        return 1
+            return 2,action.asset
+        return 1,action.asset
 
 class move(card):
-    def __init__(self,name,cost,type,effect,args,description,weight):
-        super().__init__(name,cost,type,effect,args,description)
+    def __init__(self,name,cost,type,effect,args,asset,weight):
+        super().__init__(name,cost,type,effect,args,asset)
         self.weight = weight #chance to be used
