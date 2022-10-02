@@ -61,10 +61,9 @@ def main():
     holdThatAgainstYou = move("Hold That Against You",1, neutral, HTAY,HTAYbuff,"Every time you play a card take 1 unblockable damage",1)
     showingFriendsText = move("Show Friends Your Text",2,neutral,SYF,([4,1],SYFbuff),"permernantly raises sanity damage by 4",1)
     lovelanguage = move("Love Language",1, neutral,Love,Lbuff,"permernantly raises sanity damage by 1 for every love attack played during your next turn",1)
-    
     k = move("k",3,neutral,K,12,"Deal 12 damage",1)
 
-    you.deck = [block,block,]
+    you.deck = [block,block,block,block,filrt]
     baddie1.moves = [holdThatAgainstYou]
     baddie1.updateweight()
     random.shuffle(you.deck)
